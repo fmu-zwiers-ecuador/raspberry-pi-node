@@ -1,0 +1,23 @@
+{
+  "name": "raspberry-pi-node",
+  "version": "1.0.0",
+  "description": "This is the NodeJS software running on the Raspberry Pi nodes.",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fmu-zwiers-ecuador/raspberry-pi-node.git"
+  },
+  "author": "Loreal Anderson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fmu-zwiers-ecuador/raspberry-pi-node/issues"
+  },
+  "homepage": "https://github.com/fmu-zwiers-ecuador/raspberry-pi-node#readme"
+}
