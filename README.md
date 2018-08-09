@@ -3,17 +3,19 @@ This is the NodeJS software running on the Raspberry Pi nodes.
 
 ## REST API Endpoints
 
-#### GET /
+#### GET /api
  - Returns status information of node.
  
  ```json
  {
   "battery": 57,
-  "videoCount": 14,
+  "videoCount": 3,
+  "storageAvailable": 5000000000,
+  "storageUsed": 500000000
  }
   ```
 
-#### GET /video
+#### GET /api/video
  - Returns array of videos currently saved.
 ```json
  [
@@ -22,3 +24,9 @@ This is the NodeJS software running on the Raspberry Pi nodes.
   "/opt/fmu/videos/video3.mp4",
  ]
  ```
+ 
+ #### GET /api/video/{filename}
+  - Downloads a video from the node.
+ 
+ #### DELETE /api/video/{filename}
+  - Deletes a given video from the node.
