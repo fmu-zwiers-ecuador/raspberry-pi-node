@@ -25,8 +25,18 @@ This is the NodeJS software running on the Raspberry Pi nodes.
  ]
  ```
  
- #### GET /api/video/{filename}
-  - Downloads a video from the node.
+#### GET /api/video/{filename}
+ - Downloads a video from the node.
  
- #### DELETE /api/video/{filename}
-  - Deletes a given video from the node.
+#### DELETE /api/video/{filename}
+ - Deletes a given video from the node.
+
+#### GET /api/sensors
+ - Returns any sensor data attached to this node.
+ 
+ ```json
+ {
+  "fahrenheit": 95,
+ }
+  ```
+ 
