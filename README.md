@@ -1,9 +1,9 @@
 # raspberry-pi-node
 This is the NodeJS software running on the Raspberry Pi nodes.
 
-### Endpoints
+## REST API Endpoints
 
-GET /
+#### GET /
  - Returns status information of node.
  
  ```json
@@ -13,7 +13,7 @@ GET /
  }
   ```
 
-GET /video
+#### GET /video
  - Returns array of videos currently saved.
 ```json
  [
