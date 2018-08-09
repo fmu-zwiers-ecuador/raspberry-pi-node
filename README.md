@@ -19,9 +19,9 @@ This is the NodeJS software running on the Raspberry Pi nodes.
  - Returns array of videos currently saved.
 ```json
  [
-  "/opt/fmu/videos/video1.mp4",
-  "/opt/fmu/videos/video2.mp4",
-  "/opt/fmu/videos/video3.mp4",
+  "video1.mp4",
+  "video2.mp4",
+  "video3.mp4",
  ]
  ```
  
