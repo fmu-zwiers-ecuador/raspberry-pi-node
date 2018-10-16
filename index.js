@@ -1,7 +1,8 @@
 // Raspberry Pi Node
-var express = require('express')
-var app = express()
-
+var express = require('express');
+var app = express();
+var fs = require('fs');
+var os = require('os');
 
 console.log('Initializing Raspberry Pi Node');
 
@@ -23,27 +24,42 @@ app.get('/api', function (req, res) {
 
 })
 
-app.get('/api/video', function (req, res) {
-
-   // var videos = [ "video1.mp4", "video2.mp4", "video3.mp4" ];
-   const fs = require("fs");
-
-   let directory = "/Users/lorealanderson/Desktop";
-   let dirBuf = Buffer.from(directory);
-   let files = fs.readdirSync(directory, '');
-   console.log(files);
-    //array of files on the pc
-    res.send(files);
-
-})
-
 //fs sys module
 app.delete('/api/video/:filename', function (req, res) {
 
-    var fileName = req.params.filename;
+    var fileName = '';
 
-    res.send("Deleted video from node: " + fileName);
+    if (os.platform() === 'darwin')
+    {
+        fileName = '/Users/lorealanderson/Desktop/videos/' + req.params.filename;
+    }
+    else if (os.platform() === 'linux')
+    {
+        fileName = '/home/pi/Desktop/videos/' + req.params.filename;
+    }
 
+    fs.unlink(fileName, (err) => {
+        res.send("Deleted video from node: " + fileName);
+    });
+
+})
+
+app.delete('/api/image/:filename', function (req, res) {
+
+    var fileName = '';
+
+    if (os.platform() === 'darwin')
+    {
+        fileName = '/Users/lorealanderson/Desktop/images/' + req.params.filename;
+    }
+    else if (os.platform() === 'linux')
+    {
+        fileName = '/home/pi/Desktop/images/' + req.params.filename;
+    }
+
+    fs.unlink(fileName, (err) => {
+        res.send("Deleted video from node: " + fileName);
+    });
 })
 
 app.get('/api/sensors', function (req, res) {
@@ -57,8 +73,19 @@ app.get('/api/sensors', function (req, res) {
 })
 
 // ExpressJS serve static files
-app.use('/api/download', express.static('/Users/lorealanderson/Desktop'));
-//app.use('/api/download', express.static('/home/pi/Desktop/videos'));
+var staticFolder = '';
+
+if (os.platform() === 'darwin')
+{
+    staticFolder = '/Users/lorealanderson/Desktop';
+}
+else if (os.platform() === 'linux')
+{
+    staticFolder = '/home/pi/Desktop';
+}
+
+app.use('/api/download/images', express.static(staticFolder + '/images'));
+app.use('/api/download/videos', express.static(staticFolder + '/videos'));
 
 // Start Express Web Server
 app.listen(3000)
