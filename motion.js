@@ -1,10 +1,34 @@
 // Raspberry Pi Node
 var express = require('express');
 var app = express();
+var diskspace = require('diskspace');
 var fs = require('fs');
 var os = require('os');
 
+// Initialize Raspberry Pi Node
 console.log('Initializing Raspberry Pi Node');
+
+// Add helper functions to be called by API
+var motionActive = false;
+
+function startMotion()
+{
+	require('child_process').spawn('/usr/bin/python', ['/home/pi/motion.py']);
+
+	console.log('Python motion capture started.');
+	motionActive = true;
+}
+
+function stopMotion()
+{
+	require('child_process').execSync('pkill -9 python || true');
+
+	console.log('Python motion capture stopped.');
+	motionActive = false;
+}
+
+// Kill all current motion capture and then restart.
+stopMotion();
 
 // Define Node Endpoints
 app.get('/', function (req, res) {
@@ -13,14 +37,59 @@ app.get('/', function (req, res) {
 
 app.get('/api', function (req, res) {
 
-    var status = {
-        battery: 57,
-        videoCount: 3,
-        storageAvailable: 5000000000,
-        storageUsed: 500000000
-    }
+    diskspace.check('/', function(err, result)
+    {
 
-    res.send(status);
+        const dir = '/home/pi/Desktop/videos';
+        var fileCount = 0;
+
+        var files = fs.readdirSync(dir);
+        fileCount = files.length;
+
+        var status = {
+	    batteryLevel: 0,
+            motionActive: motionActive,
+            videoCount: fileCount,
+            storageAvailable: result.total,
+            storageFree: result.free,
+            storageUsed: result.used,
+        }
+
+        res.send(status);
+    });
+
+})
+
+app.get('/api/videos', function (req, res) {
+
+    const dir = '/home/pi/Desktop/videos';
+
+    var files = fs.readdirSync(dir);
+
+    var videos = [];
+
+    files.forEach(file => {
+        videos.push(file);
+    })
+
+    res.send(videos);
+
+})
+
+app.get('/api/motion/start', function (req, res) {
+
+	stopMotion();
+	startMotion();
+
+	res.send("Python motion capture started.");
+
+})
+
+app.get('/api/motion/stop', function (req, res) {
+
+	stopMotion(false);
+
+	res.send("Python motion capture stopped.");
 
 })
 
@@ -88,4 +157,4 @@ app.use('/api/download/images', express.static(staticFolder + '/images'));
 app.use('/api/download/videos', express.static(staticFolder + '/videos'));
 
 // Start Express Web Server
-app.listen(3000)
+app.listen(3000);
