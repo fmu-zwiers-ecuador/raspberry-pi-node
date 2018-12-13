@@ -3,7 +3,7 @@ sudo apt-get update
 sudo apt-get -y upgrade
 
 # Install dependencies
-sudo apt-get install -y nano python nodejs git
+sudo apt-get install -y nano python nodejs npm git
 
 # Download latest code from repo
 cd /home/pi
