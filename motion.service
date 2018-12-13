@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/home/pi
-ExecStart=/usr/bin/node /home/pi/motion.js
+ExecStart=/usr/bin/node /home/pi/raspberry-pi-node/motion.js
 Restart=on-failure
 
 [Install]
