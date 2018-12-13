@@ -5,8 +5,11 @@ This is the NodeJS software running on the Raspberry Pi nodes.
 - Open a Terminal and type:
 
   cd /home/pi
+  
   wget https://raw.githubusercontent.com/fmu-zwiers-ecuador/raspberry-pi-node/master/install.sh
+  
   chmod 755 install.sh
+  
   ./install.sh
 
 - You will be prompted that the installation completed. It will be running at this time. To confirm:
