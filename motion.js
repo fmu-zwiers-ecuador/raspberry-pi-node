@@ -11,6 +11,17 @@ console.log('Initializing Raspberry Pi Node');
 // Add helper functions to be called by API
 var motionActive = false;
 
+// Create needed directories
+if (!fs.existsSync("/home/pi/Desktop/images")){
+    fs.mkdirSync("/home/pi/Desktop/images");
+}
+if (!fs.existsSync("/home/pi/Desktop/temp")){
+    fs.mkdirSync("/home/pi/Desktop/temp");
+}
+if (!fs.existsSync("/home/pi/Desktop/videos")){
+    fs.mkdirSync("/home/pi/Desktop/videos");
+}
+
 function startMotion()
 {
 	require('child_process').spawn('/usr/bin/python', ['/home/pi/motion.py']);
