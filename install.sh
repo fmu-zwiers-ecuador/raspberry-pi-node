@@ -19,4 +19,5 @@ sudo systemctl enable motion.service
 
 # Inform user the installation is complete
 echo 
+echo 
 echo Motion service installed!
