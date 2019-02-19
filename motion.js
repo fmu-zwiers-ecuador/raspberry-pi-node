@@ -24,7 +24,7 @@ if (!fs.existsSync("/home/pi/Desktop/videos")){
 
 function startMotion()
 {
-	require('child_process').spawn('/usr/bin/python', ['/home/pi/motion.py']);
+	require('child_process').spawn('/usr/bin/python', ['/home/pi/raspberry-pi-node/motion.py']);
 
 	console.log('Python motion capture started.');
 	motionActive = true;
