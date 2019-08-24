@@ -2,7 +2,7 @@
 #!/usr/bin/python
 # Minimal Motion Detection Logic written by Claude Pageau Dec-2014
 # Adjustments for FMU Ecuador project by Loreal Anderson Sept-2018
-
+# Adjustments for FMU Ecuador project by Aaron Fulmer Aug-2019
 import time
 import datetime
 import os
@@ -12,6 +12,15 @@ import shutil
 import subprocess
 import sys
 from fractions import Fraction
+
+import adafruit_tsl2591
+import busio
+import psutil
+import board
+
+# Create object to reference the TSL2591 (Lux Sensor)
+i2c = busio.I2C(board.SCL, board.SDA)
+tsl = adafruit_tsl2591.TSL2591(i2c)
 
 # Verify that the images/temp/videos folders exist
 rootFolder = "/home/pi/Desktop/"
@@ -138,6 +147,7 @@ def getStreamImage(daymode):
 
 #-----------------------------------------------------------------------------------------------           
 def Main():
+    '''
     dayTime = True
     msgStr = "Checking for Motion dayTime=%s threshold=%i sensitivity=%i" % ( dayTime, threshold, sensitivity)
     showMessage("Main",msgStr)
@@ -146,7 +156,37 @@ def Main():
         stream2 = getStreamImage(dayTime)
         if checkForMotion(stream1, stream2):
             userMotionCode()
-        stream1 = stream2        
+        stream1 = stream2
+    '''
+    stream1 = getStreamImage(True)		# Get a baseline image for use with camera motion detection
+    while True:
+        dayTime = tsl.lux > 6			# Repeatedly check light levels to decide between day and night mode
+        if dayTime:				        # If there is enough light for day mode...
+            try:
+                    pid = [p for p in psutil.pids() if psutil.Process(p).name() == "python"]  # Get a list of the PIDs of all rumming instances of python 2
+                    print(pid[0])				# Print the first (and, ideally, only) element of the list for debugging
+                    os.system("sudo kill " + str(pid[0]))	# As super-user, kill the process
+                    stream1 = getStreamImage(True)		    # Get a new baseline image for camera motion detection
+            
+            except:	# If an exception is thrown in finding the PID of the PIR motion script... (Implying PIR script is not running)
+                    stream2 = getStreamImage(True)		    # Take a new picture
+                    if checkForMotion(stream1, stream2):	# If there is sufficient difference to indicate motion...
+                        userMotionCode()			        # Execute the user motion code
+                    stream1 = stream2				        # Set the baseline image to the newest image
+        else:					# If there is not enough light for daymode...
+            try:
+                    pList = [p for p in psutil.pids() if psutil.Process(p).name() == "python"]	# Get a list of the PIDs of all running instances of python 2
+                    print(pList)				    # Print the list of PIDs for debugging
+                    if len(pList)  == 0:			# If there no running instances of python 2 (PIR script is not running)...
+                        print(os.system("sudo python /home/pi/Desktop/pir.py &")) # Start an instance of the PIR script as a super-user
+                        time.sleep(0.3)				# Pause the script for 1/3 of a second to allow the process to start
+            except:
+                    pass
+                    '''
+                    	Nothing is placed here because if there is an error in starting the PIR script, then day mode should
+                    continue to function as normal even if night mode won't. Having all of this in a try-except block allows
+                    for this.
+                    '''
     return
      
 #-----------------------------------------------------------------------------------------------           
